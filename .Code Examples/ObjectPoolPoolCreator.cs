@@ -18,6 +18,8 @@ using UnityEngine;
 
 public class ObjectPoolPoolCreator : MonoBehaviour
 {
+    private enum DeleteMode { DontDelete, DeleteComponent, DeleteObject }
+
     /// <summary>
     /// The Preset for every single Pool you want to create via the Inspector
     /// </summary>
@@ -55,6 +57,11 @@ public class ObjectPoolPoolCreator : MonoBehaviour
     /// </summary>
     [SerializeField] private List<PoolPreset> poolPresets = new List<PoolPreset>();
 
+    /// <summary>
+    /// Delete after wokr? If yes, how
+    /// </summary>
+    [SerializeField] private DeleteMode deleteMode = DeleteMode.DeleteObject;
+
     private void Start()
     {
         // Only create if it should (if not, destroy Object)
@@ -71,6 +78,23 @@ public class ObjectPoolPoolCreator : MonoBehaviour
         }
 
         // Destroy Object after creating the pools
-        Destroy(this.gameObject);
+        switch (deleteMode)
+        {
+            case DeleteMode.DeleteComponent:
+            {
+                Destroy(this);
+            }
+            break;
+
+            case DeleteMode.DeleteObject:
+            {
+                Destroy(this.gameObject);
+            }
+            break;
+
+            case DeleteMode.DontDelete:
+            default:
+            break;
+        }
     }
 }
