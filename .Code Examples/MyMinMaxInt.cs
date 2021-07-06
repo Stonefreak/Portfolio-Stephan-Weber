@@ -79,4 +79,27 @@ public class MyMinMaxInt
             return randomValue;
         }
     }
+
+    /// <summary>
+    /// To get the progress of the entered value between the Min- and MaxValues
+    /// </summary>
+    /// <param name="_value">The value to get the Progress for</param>
+    /// <returns>Progress between 0.0f and 1.0f</returns>
+    public float Progress(int _value)
+    {
+        return Progress((float)_value);
+    }
+
+    /// <summary>
+    /// To get the progress of the entered value between the Min- and MaxValues
+    /// </summary>
+    /// <param name="_value">The value to get the Progress for</param>
+    /// <returns>Progress between 0.0f and 1.0f</returns>
+    public float Progress(float _value)
+    {
+        _value -= MinValue;
+        float fullProgress = MaxValue - MinValue;
+
+        return _value / fullProgress;
+    }
 }
