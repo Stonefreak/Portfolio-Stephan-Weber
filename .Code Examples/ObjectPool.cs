@@ -66,6 +66,8 @@ public class ObjectPool : MonoBehaviour
     /// </summary>
     public List<string> poolnames = new List<string>();
 
+    private const string deletedPoolName = "Deleted Objects";
+
     private void Awake()
     {
         // Creating an Instance if no other already exists
@@ -182,7 +184,7 @@ public class ObjectPool : MonoBehaviour
     }
 
     /// <summary>
-    /// Used to stora an Object back into a pool.
+    /// Used to store an Object back into a pool. If the Object was in an deleted Pool, it will be Destroyed
     /// </summary>
     /// <param name="_name">The name of the pool</param>
     /// <param name="_object">The Object to store</param>
@@ -190,7 +192,22 @@ public class ObjectPool : MonoBehaviour
     {
         if (!poolnames.Contains(_name))
         {
-            CreatePool(_name, _object, 4);
+            // If the Object was in a pool that is deleted now, this Object will be Destroyed, else it creates a pool
+            if (poolnames.Contains(deletedPoolName))
+            {
+                for (int i = 0; i < pools[deletedPoolName].Count; i++)
+                {
+                    if (pools[deletedPoolName][i].gameObject == _object)
+                    {
+                        Destroy(_object.transform);
+                        pools[deletedPoolName].RemoveAt(i);
+
+                        return;
+                    }
+                }
+            }
+
+            CreatePool(_name, _object, 0);
         }
 
         for (int i = 0; i < pools[_name].Count; i++)
@@ -255,5 +272,35 @@ public class ObjectPool : MonoBehaviour
                 StoreObject(_name, pools[_name][i].gameObject);
             }
         }
+    }
+
+    /// <summary>
+    /// Delets an existing pool.
+    /// </summary>
+    /// <param name="_poolName">The name of the pool that should be deleted</param>
+    /// <param name="_keepUsedObjects">Defines if actual used Objects should be deleted now or when they are stored again</param>
+    public void DeletePool(string _poolName, bool _keepUsedObjects = true)
+    {
+        if (!poolnames.Contains(_poolName)) return;
+
+        for (int i = pools[_poolName].Count - 1; i >= 0; i--)
+        {
+            if (pools[_poolName][i].isUsed && _keepUsedObjects)
+            {
+                if (!poolnames.Contains(deletedPoolName))
+                {
+                    CreatePool(deletedPoolName, null, 0);
+                }
+
+                StoreObject(deletedPoolName, pools[_poolName][i].gameObject);
+            }
+            else
+            {
+                Destroy(pools[_poolName][i].gameObject);
+            }
+        }
+
+        pools[_poolName].Clear();
+        pools.Remove(_poolName);
     }
 }
