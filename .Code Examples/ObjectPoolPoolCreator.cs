@@ -27,6 +27,19 @@ public class ObjectPoolPoolCreator : MonoBehaviour
     public struct PoolPreset
     {
         /// <summary>
+        /// Basic Constructor to fill every variable.
+        /// </summary>
+        /// <param name="_poolName">The Name of the new Pool</param>
+        /// <param name="_poolPrefab">The Prefab of the new Pool</param>
+        /// <param name="_poolSize">The Ammount of Objects in the new Pool</param>
+        public PoolPreset(string _poolName, GameObject _poolPrefab, int _poolSize)
+        {
+            PoolName = _poolName;
+            PoolPrefab = _poolPrefab;
+            PoolSize = _poolSize;
+        }
+
+        /// <summary>
         /// The Name of the Pool
         /// </summary>
         [SerializeField] private string poolName;
