@@ -34,9 +34,9 @@ public class ObjectPoolPoolCreator : MonoBehaviour
         /// <param name="_poolSize">The Ammount of Objects in the new Pool</param>
         public PoolPreset(string _poolName, GameObject _poolPrefab, int _poolSize)
         {
-            PoolName = _poolName;
-            PoolPrefab = _poolPrefab;
-            PoolSize = _poolSize;
+            poolName = _poolName;
+            poolPrefab = _poolPrefab;
+            poolSize = _poolSize;
         }
 
         /// <summary>
