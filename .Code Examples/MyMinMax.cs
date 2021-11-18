@@ -94,4 +94,14 @@ public class MyMinMax
 
         return _value / fullProgress;
     }
+
+    /// <summary>
+    /// To clamp a float between thew min and max values
+    /// </summary>
+    /// <param name="_value">value to clamp</param>
+    /// <returns>clamped value</returns>
+    public float Clamp(float _value)
+    {
+        return Mathf.Clamp(_value, MinValue, MaxValue);
+    }
 }
