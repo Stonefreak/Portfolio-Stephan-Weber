@@ -302,5 +302,6 @@ public class ObjectPool : MonoBehaviour
 
         pools[_poolName].Clear();
         pools.Remove(_poolName);
+        poolnames.Remove(_poolName);
     }
 }
