@@ -303,7 +303,7 @@ public class ObjectPool : MonoBehaviour
         pools[_poolName].Clear();
         pools.Remove(_poolName);
         poolPrefabs.Remove(_poolName);
-        Destroy(poolParents[_poolName]);
+        Destroy(poolParents[_poolName].gameObject);
         poolParents.Remove(_poolName);
         poolnames.Remove(_poolName);
     }
