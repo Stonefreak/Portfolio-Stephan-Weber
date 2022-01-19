@@ -96,6 +96,16 @@ public class MyMinMax
     }
 
     /// <summary>
+    /// To get a Lerped value between the Min- and MaxValues
+    /// </summary>
+    /// <param name="_value">The value to Lerp to between 0.0 and 1.0</param>
+    /// <returns>The lerped Value</returns>
+    public float Lerp(float _value)
+    {
+        return Mathf.Lerp(minValue, maxValue, _value);
+    }
+
+    /// <summary>
     /// To clamp a float between thew min and max values
     /// </summary>
     /// <param name="_value">value to clamp</param>
