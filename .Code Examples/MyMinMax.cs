@@ -9,9 +9,9 @@
  *      The min- and maxvalues can also be accessed separately.
  * 
  * ***************************************************************************/
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 [System.Serializable]
 public class MyMinMax 
