@@ -54,7 +54,7 @@ public class ObjectPool : MonoBehaviour
     /// </summary>
     private readonly Dictionary<string, GameObject> poolPrefabs = new Dictionary<string, GameObject>();
     /// <summary>
-    /// The Parent for every Pool (cepps the Hirarchy Organized)
+    /// The Parent for every Pool (keeps the Hierarchy Organized)
     /// </summary>
     private readonly Dictionary<string, Transform> poolParents = new Dictionary<string, Transform>();
     /// <summary>
