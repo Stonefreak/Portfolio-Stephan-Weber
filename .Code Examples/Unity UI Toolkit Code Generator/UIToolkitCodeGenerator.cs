@@ -7,9 +7,23 @@ using UnityEngine.UIElements;
 
 namespace Stonefreak.Tooling
 {
+    /// <summary>
+    /// This class provides a static function 'Generate' to produce and save a partial class 
+    /// taking care of managing references to VisualElements from a Unity UI Toolkit Document
+    /// </summary>
     public class UIToolkitCodeGenerator : EditorWindow
     {
-        public static bool Generate(VisualTreeAsset doc, string className, string fileDir, Accessor accessor, string styleFilter = "")
+        /// <summary>
+        /// Generates, saves and lets Unity compile a partial class managing the querrying of 
+        /// VisualElements filtered by the existance of a name and optionally by a specified style/class.
+        /// </summary>
+        /// <param name="doc">The UXML File to extract the data from.</param>
+        /// <param name="className">The name of the partial class. Also used for a part of the file name.</param>
+        /// <param name="fileDir">The directory the file should be saved in.</param>
+        /// <param name="accessor">The accessor every reference to the VisualElements should have.<br/>'Protected' is recommended.</param>
+        /// <param name="styleFilter">The style to filter for. Leave empty or whitespace to ignore.</param>
+        /// <returns>Whether the operation could be completed successfully or not.</returns>
+        public static bool Generate(VisualTreeAsset doc, string className, string fileDir, Accessor accessor = Accessor.Protected, string styleFilter = "")
         {
             // Error Checks
             if (doc == null)
@@ -31,16 +45,39 @@ namespace Stonefreak.Tooling
             // Start Stopwatch
             var watch = System.Diagnostics.Stopwatch.StartNew();
 
-            // Generate and Save Code
-            var elements = ExtractUIElements(doc, styleFilter);
-            var code = GenerateCodeFile(elements, className, accessor);
+            // Extract VisualElements
+            var rElements = ExtractUIElements(doc, styleFilter);
+            if (!rElements.success)
+            {
+                watch.Stop();
+                var time = watch.ElapsedMilliseconds / 1000f;
+
+                Debug.LogError($"Extraction of Visual Elements <color=red>failed</color> after {time:0.00}s -> The entered Directory does not exist");
+
+                return false;
+            }
+
+            // Generate Code
+            var rCode = GenerateCode(rElements.elements, className, accessor);
+            if (!rCode.success)
+            {
+                watch.Stop();
+                var time = watch.ElapsedMilliseconds / 1000f;
+
+                Debug.LogError($"Code Generation <color=red>failed</color> after {time:0.00}s -> The entered Directory does not exist");
+
+                return false;
+            }
+
+            // Save Code to file
             try
             {
-                SaveCodeAsFile(code, className, fileDir);
+                var result = SaveCodeAsFile(rCode.code, className, fileDir);
+                if (result == false) throw new System.Exception();
             }
             catch (System.Exception e)
             {
-                Debug.LogError($"Code Generation <color=red>failed</color> -> '{e}'");
+                Debug.LogError($"Code Saving <color=red>failed</color> -> '{e}'");
                 return false;
             }
 
@@ -52,7 +89,8 @@ namespace Stonefreak.Tooling
             return true;
         }
 
-        private static List<VisualElement> ExtractUIElements(VisualTreeAsset document, string styleFilter)
+        #region Element Extraction
+        private static (bool success, List<VisualElement> elements) ExtractUIElements(VisualTreeAsset document, string styleFilter)
         {
             var elements = new List<VisualElement>();
             var prevNames = new HashSet<string>();
@@ -60,7 +98,7 @@ namespace Stonefreak.Tooling
             var root = document.Instantiate();
             ExtractUIElementsRecursive(root, styleFilter, ref elements, ref prevNames);
 
-            return elements;
+            return (true, elements);
         }
 
         private static void ExtractUIElementsRecursive(VisualElement element, string styleFilter, ref List<VisualElement> elements, ref HashSet<string> prevNames)
@@ -82,8 +120,10 @@ namespace Stonefreak.Tooling
                 ExtractUIElementsRecursive(child, styleFilter, ref elements, ref prevNames);
             }
         }
+        #endregion
 
-        private static string GenerateCodeFile(List<VisualElement> elements, string className, Accessor accessor)
+        #region CodeGen and IO
+        private static (bool success, string code) GenerateCode(List<VisualElement> elements, string className, Accessor accessor)
         {
             var code = new StringBuilder();
 
@@ -132,7 +172,7 @@ namespace Stonefreak.Tooling
             code.AppendLine("\t}");
             code.AppendLine("}");
 
-            return code.ToString();
+            return (true, code.ToString());
         }
 
         private static bool SaveCodeAsFile(string code, string fileName, string directory)
@@ -144,5 +184,6 @@ namespace Stonefreak.Tooling
             File.WriteAllText(filePath, code);
             return true;
         }
+        #endregion
     }
 }

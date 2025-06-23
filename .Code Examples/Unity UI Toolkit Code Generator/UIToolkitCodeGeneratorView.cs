@@ -7,6 +7,10 @@ namespace Stonefreak.Tooling
 {
     public enum Accessor : byte { Private, Protected, Internal, Public }
 
+    /// <summary>
+    /// This class acts as a View, making the user of the Code Generator able to access its logic via a custom Editor Window. 
+    /// Default way to open the Window is through 'Tools/Stonefreak/UITK Code Generator'.
+    /// </summary>
     public class UIToolkitCodeGeneratorView : EditorWindow
     {
         private ObjectField _documentInput = null;
@@ -145,6 +149,7 @@ namespace Stonefreak.Tooling
             _selectedAccessor = (Accessor)_accessorInput.value;
             _selectedFilter = _shouldFilterByStyleToggle.value ? _filterStyleInput.value : string.Empty;
         }
+        private void OnDisable() => ExtractValues();
 
         #region Event Listener
         private void OnDirectoryBtnClicked()
@@ -163,7 +168,5 @@ namespace Stonefreak.Tooling
 
         private void OnFilterStyleToggled(ChangeEvent<bool> e) => _filterStyleInput.style.display = e.newValue ? DisplayStyle.Flex : DisplayStyle.None;
         #endregion
-
-        private void OnDisable() => ExtractValues();
     }
 }
